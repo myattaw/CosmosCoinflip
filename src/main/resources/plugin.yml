@@ -1,0 +1,4 @@
+name: CoinflipPlugin
+version: '${project.version}'
+main: me.rages.cosmosconflip.CoinflipPlugin
+api-version: 1.20
