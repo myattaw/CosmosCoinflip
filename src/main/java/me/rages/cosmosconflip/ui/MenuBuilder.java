@@ -8,20 +8,27 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class MenuBuilder<T> implements InventoryHolder {
 
     public Inventory inventory;
     private String title;
 
-//    public MenuBuilder(String title, int rows) {
-//        this.title = title;
-//        this.inventory = Bukkit.createInventory(this, 9 * rows, getTitle());
-//    }
-
     public MenuBuilder(String title, InventoryType inventoryType) {
         this.title = title;
         this.inventory = Bukkit.createInventory(this, inventoryType, getTitle());
+    }
+
+    public MenuBuilder(String title) {
+        this.title = title;
+        this.inventory = Bukkit.createInventory(this, 27, getTitle());
     }
 
     public String getTitle() {

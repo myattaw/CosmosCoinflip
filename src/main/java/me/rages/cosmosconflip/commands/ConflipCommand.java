@@ -3,13 +3,17 @@ package me.rages.cosmosconflip.commands;
 import me.rages.cosmosconflip.CoinflipPlugin;
 import me.rages.cosmosconflip.ui.CFMenu;
 import me.rages.cosmosconflip.ui.ColorMenu;
+import me.rages.cosmosconflip.util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
+
+import static me.rages.cosmosconflip.util.Util.getValueFromAbbreviatedCurrency;
 
 public class ConflipCommand implements CommandExecutor {
 
@@ -21,17 +25,46 @@ public class ConflipCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String str, @NotNull String[] args) {
 
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
 //            player.openInventory(new ColorMenu("Choose a Color", InventoryType.DISPENSER).init().getInventory());
 
-            CoinflipPlugin.CoinFlipMatch match = CoinflipPlugin.CoinFlipMatch.create(
-                    player, new CFMenu("cf", Material.PURPLE_CONCRETE).init().open(player)
-            );
 
-            match.startGame(player, new CFMenu("cf", Material.RED_CONCRETE).init());
+            if (args.length > 0) {
+                if (args[0].equalsIgnoreCase("create")) {
+                    if (args.length > 1 && getValueFromAbbreviatedCurrency(args[1]) != -1) {
+                        double amount = getValueFromAbbreviatedCurrency(args[1]);
+                        player.openInventory(
+                                new ColorMenu("Choose a Color", amount,-1).init().getInventory()
+                        );
+                        Bukkit.broadcastMessage("created: " + amount);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "Usage: /coinflip create [$amount]");
+                    }
+                }
+            } else {
+                // display menu off current coinflips
+            }
+
+            System.out.println(args.length);
+
+//            CoinflipPlugin.CoinFlipMatch match = CoinflipPlugin.CoinFlipMatch.create(
+//                    player, new CFMenu(player, 1245750, Material.PURPLE_CONCRETE).init().open(player)
+//            );
+//
+//
+//            // target instead of player below
+//            match.startGame(player, new CFMenu(player, 1245750, Material.RED_CONCRETE).init());
+//
+//            match.getCreatorMenu().setOpponent(
+//                    match.getOpponentMenu().getUser(), match.getOpponentMenu().getUserMaterial()
+//            );
+//            match.getOpponentMenu().setOpponent(
+//                    match.getCreatorMenu().getUser(), match.getCreatorMenu().getUserMaterial()
+//            );
+
 
             return true;
         }
