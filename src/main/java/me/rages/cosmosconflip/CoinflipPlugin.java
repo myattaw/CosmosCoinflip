@@ -1,29 +1,65 @@
 package me.rages.cosmosconflip;
 
-import com.google.common.collect.ImmutableMap;
 import me.rages.cosmosconflip.commands.ConflipCommand;
-import me.rages.cosmosconflip.ui.CFMenu;
-import me.rages.cosmosconflip.ui.ColorMenu;
+import me.rages.cosmosconflip.menu.MenuBuilder;
+import me.rages.cosmosconflip.menu.impl.CFViewMenu;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public final class CoinflipPlugin extends JavaPlugin {
+public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
     public static CoinflipPlugin plugin;
+    public List<CoinFlipMatch> coinFlipMatchList = new ArrayList<>();
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         new ConflipCommand(this);
+        getServer().getPluginManager().registerEvents(this, this);
+    }
+
+    @Override
+    public void onDisable() {
+        // give back all the money to all players
+
+        for (CoinFlipMatch matches : coinFlipMatchList) {
+
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getInventory().getHolder() instanceof MenuBuilder) {
+            MenuBuilder menuBuilder = (MenuBuilder) event.getInventory().getHolder();
+            menuBuilder.onInventoryClick(event);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        if (event.getInventory().getHolder() instanceof MenuBuilder) {
+            MenuBuilder menuBuilder = (MenuBuilder) event.getInventory().getHolder();
+            menuBuilder.onInventoryOpen(event);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (event.getInventory().getHolder() instanceof MenuBuilder) {
+            MenuBuilder menuBuilder = (MenuBuilder) event.getInventory().getHolder();
+            menuBuilder.onInventoryClose(event);
+        }
     }
 
     public CoinflipPlugin() {
@@ -34,20 +70,20 @@ public final class CoinflipPlugin extends JavaPlugin {
         private Player creator;
         private Player opponent;
 
-        private CFMenu creatorMenu;
-        private CFMenu opponentMenu;
+        private CFViewMenu creatorMenu;
+        private CFViewMenu opponentMenu;
 
         private static final Random random = new Random();
 
         private Stack<Boolean> flips = new Stack<>();
 
 
-        CoinFlipMatch(Player creator, CFMenu creatorMenu) {
+        CoinFlipMatch(Player creator, CFViewMenu creatorMenu) {
             this.creator = creator;
             this.creatorMenu = creatorMenu;
         }
 
-        public static CoinFlipMatch create(Player creator, CFMenu creatorMenu) {
+        public static CoinFlipMatch create(Player creator, CFViewMenu creatorMenu) {
             return new CoinFlipMatch(creator, creatorMenu);
         }
 
@@ -55,7 +91,7 @@ public final class CoinflipPlugin extends JavaPlugin {
             return random.nextBoolean();
         }
 
-        public void startGame(Player opponent, CFMenu opponentMenu) {
+        public void startGame(Player opponent, CFViewMenu opponentMenu) {
             this.opponent = opponent;
             this.opponentMenu = opponentMenu;
 
@@ -92,23 +128,22 @@ public final class CoinflipPlugin extends JavaPlugin {
 
                             if (flips.isEmpty()) {
                                 Bukkit.broadcastMessage(coin ? "Creator has won" : "Opponent has won");
-
                                 System.out.println("good");
                             }
 
                         }
-                    } else if (hasTimeElapsed(startTime.get(), 1, TimeUnit.SECONDS)) {
+                    } else if (hasTimeElapsed(startTime.get(), 3, TimeUnit.SECONDS)) {
                         Bukkit.getScheduler().cancelTask(taskID.get());
                     }
                 }
             }, 2L, 2L));
         }
 
-        public CFMenu getCreatorMenu() {
+        public CFViewMenu getCreatorMenu() {
             return creatorMenu;
         }
 
-        public CFMenu getOpponentMenu() {
+        public CFViewMenu getOpponentMenu() {
             return opponentMenu;
         }
     }

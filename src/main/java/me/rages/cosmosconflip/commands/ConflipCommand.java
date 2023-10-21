@@ -1,12 +1,9 @@
 package me.rages.cosmosconflip.commands;
 
 import me.rages.cosmosconflip.CoinflipPlugin;
-import me.rages.cosmosconflip.ui.CFMenu;
-import me.rages.cosmosconflip.ui.ColorMenu;
-import me.rages.cosmosconflip.util.Util;
+import me.rages.cosmosconflip.menu.impl.CFColorMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,9 +33,7 @@ public class ConflipCommand implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("create")) {
                     if (args.length > 1 && getValueFromAbbreviatedCurrency(args[1]) != -1) {
                         double amount = getValueFromAbbreviatedCurrency(args[1]);
-                        player.openInventory(
-                                new ColorMenu("Choose a Color", amount,-1).init().getInventory()
-                        );
+                        CFColorMenu.create("Choose a Color", amount,-1).init().open(player);
                         Bukkit.broadcastMessage("created: " + amount);
                     } else {
                         player.sendMessage(ChatColor.RED + "Usage: /coinflip create [$amount]");

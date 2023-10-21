@@ -1,5 +1,6 @@
-package me.rages.cosmosconflip.ui;
+package me.rages.cosmosconflip.menu.impl;
 
+import me.rages.cosmosconflip.menu.MenuBuilder;
 import me.rages.cosmosconflip.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static me.rages.cosmosconflip.util.Util.*;
 
-public class CFMenu extends MenuBuilder {
+public class CFViewMenu extends MenuBuilder {
 
     private Player user;
     private Player opponent;
@@ -22,14 +23,14 @@ public class CFMenu extends MenuBuilder {
     private Material opponentMaterial;
     private int timer = 3;
 
-    public CFMenu(Player user, double amount, Material creatorMaterial) {
+    public CFViewMenu(Player user, double amount, Material creatorMaterial) {
         super("Coin Flip Match - " + Util.getAbbreviatedCurrency(amount, true), InventoryType.HOPPER);
         this.user = user;
         this.userMaterial = creatorMaterial;
         this.amount = amount;
     }
 
-    public CFMenu(String title, Material creatorMaterial, Material opponentMaterial) {
+    public CFViewMenu(String title, Material creatorMaterial, Material opponentMaterial) {
         super(title, InventoryType.HOPPER);
         this.userMaterial = creatorMaterial;
         this.opponentMaterial = opponentMaterial;
@@ -37,12 +38,7 @@ public class CFMenu extends MenuBuilder {
     }
 
     @Override
-    public CFMenu init() {
-        return this;
-    }
-
-    public CFMenu open(Player player) {
-        player.openInventory(inventory);
+    public CFViewMenu init() {
         return this;
     }
 

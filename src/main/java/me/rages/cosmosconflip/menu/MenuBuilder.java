@@ -1,20 +1,14 @@
-package me.rages.cosmosconflip.ui;
+package me.rages.cosmosconflip.menu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class MenuBuilder<T> implements InventoryHolder {
 
@@ -30,6 +24,13 @@ public abstract class MenuBuilder<T> implements InventoryHolder {
         this.title = title;
         this.inventory = Bukkit.createInventory(this, 27, getTitle());
     }
+
+    public MenuBuilder open(Player player) {
+        player.openInventory(inventory);
+        return this;
+    }
+
+
 
     public String getTitle() {
         return ChatColor.translateAlternateColorCodes('&', title);

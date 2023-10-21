@@ -1,6 +1,10 @@
-package me.rages.cosmosconflip.ui;
+package me.rages.cosmosconflip.menu.impl;
 
+import me.rages.cosmosconflip.CoinflipPlugin;
+import me.rages.cosmosconflip.menu.MenuBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -12,7 +16,7 @@ import java.util.AbstractMap;
 import static me.rages.cosmosconflip.util.Util.COLOR_CODE_MAP;
 import static me.rages.cosmosconflip.util.Util.setItemNameAndLore;
 
-public class ColorMenu extends MenuBuilder {
+public class CFColorMenu extends MenuBuilder {
 
     private int ignored;
     private double amount;
@@ -38,14 +42,18 @@ public class ColorMenu extends MenuBuilder {
     };
 
 
-    public ColorMenu(String title, double amount, int ignored) {
+    private CFColorMenu(String title, double amount, int ignored) {
         super(title, InventoryType.DROPPER);
         this.ignored = ignored;
         this.amount = amount;
     }
 
+    public static CFColorMenu create(String title, double amount, int ignored) {
+        return new CFColorMenu(title, amount, ignored);
+    }
+
     @Override
-    public ColorMenu init() {
+    public CFColorMenu init() {
         int i = 0;
         for (Material material : COLOR_CODE_MAP.keySet()) {
             if (i != ignored) {
@@ -65,16 +73,32 @@ public class ColorMenu extends MenuBuilder {
 
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
+        // Take money from player
+        // if player does not have enough money cancel
+        event.setCancelled(true);
+        ItemStack itemStack = event.getCurrentItem();
+
+        Player player = (Player) event.getWhoClicked();
+
+        if (COLOR_CODE_MAP.containsKey(itemStack.getType())) {
+            CoinflipPlugin.plugin.coinFlipMatchList.add(
+                    CoinflipPlugin.CoinFlipMatch.create(
+                            player,
+                            new CFViewMenu(player, amount, itemStack.getType())
+                    )
+            );
+            player.closeInventory();
+        }
+
+        Bukkit.broadcastMessage("test: " + CoinflipPlugin.plugin.coinFlipMatchList.size());
 
     }
 
     @Override
     public void onInventoryClose(InventoryCloseEvent event) {
-
     }
 
     @Override
     public void onInventoryOpen(InventoryOpenEvent event) {
-
     }
 }
