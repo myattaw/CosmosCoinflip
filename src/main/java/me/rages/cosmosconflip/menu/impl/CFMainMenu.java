@@ -46,6 +46,7 @@ public class CFMainMenu extends MenuBuilder {
             Player player = (Player) event.getWhoClicked();
             CoinflipPlugin.CoinFlipMatch match = plugin.coinFlipMatchList.get(slot);
             if (match.getCreatorMenu().getUser() != player) {
+                System.out.println(match.getAmount());
                 CFColorMenu.start("Choose a Color", match.getAmount(), match.getIgnored(), match).init().open(player);
             } else {
                 player.sendMessage(ChatColor.RED + "You cannot start a match with yourself.");

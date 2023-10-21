@@ -4,6 +4,7 @@ import me.rages.cosmosconflip.commands.ConflipCommand;
 import me.rages.cosmosconflip.menu.MenuBuilder;
 import me.rages.cosmosconflip.menu.impl.CFMainMenu;
 import me.rages.cosmosconflip.menu.impl.CFViewMenu;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -23,9 +25,16 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
     public static CoinflipPlugin plugin;
     public List<CoinFlipMatch> coinFlipMatchList = new ArrayList<>();
     private CFMainMenu cfMainMenu;
+    private static Economy econ = null;
 
     @Override
     public void onEnable() {
+        if (!setupEconomy()) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         new ConflipCommand(this);
         getServer().getPluginManager().registerEvents(this, this);
         this.cfMainMenu = new CFMainMenu(this).init();
@@ -39,6 +48,19 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
         }
     }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -69,6 +91,10 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
         plugin = this;
     }
 
+    public static Economy getEconomy() {
+        return econ;
+    }
+
     public static class CoinFlipMatch {
         private Player creator;
         private Player opponent;
@@ -86,6 +112,8 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
         CoinFlipMatch(Player creator, CFViewMenu creatorMenu, int ignored) {
             this.creator = creator;
             this.creatorMenu = creatorMenu;
+            this.ignored = ignored;
+            this.amount = creatorMenu.getAmount();
         }
 
         public static CoinFlipMatch create(Player creator, CFViewMenu creatorMenu, int ignored) {
@@ -132,8 +160,13 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
                             opponentMenu.updateCoin(!flip, flips.isEmpty());
 
                             if (flips.isEmpty()) {
-                                Bukkit.broadcastMessage(coin ? "Creator has won" : "Opponent has won");
-                                System.out.println("good");
+                                if (coin) {
+                                    Bukkit.broadcastMessage("Creator has won");
+                                    CoinflipPlugin.getEconomy().depositPlayer(creator.getPlayer(), amount * 2);
+                                } else {
+                                    Bukkit.broadcastMessage("Opponent has won");
+                                    CoinflipPlugin.getEconomy().depositPlayer(opponent.getPlayer(), amount * 2);
+                                }
                             }
 
                         }

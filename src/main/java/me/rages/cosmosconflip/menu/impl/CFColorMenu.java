@@ -79,6 +79,11 @@ public class CFColorMenu extends MenuBuilder {
                                 ignored == -1 ? CREATE_LORE : START_LORE
                         )
                 );
+            } else {
+                inventory.setItem(
+                        i,
+                        setItemNameAndLore(new ItemStack(Material.BARRIER), ChatColor.DARK_RED + "Unavailable")
+                );
             }
             i++;
         }
@@ -87,8 +92,6 @@ public class CFColorMenu extends MenuBuilder {
 
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
-        // Take money from player
-        // if player does not have enough money cancel
         event.setCancelled(true);
         ItemStack itemStack = event.getCurrentItem();
 
@@ -97,27 +100,41 @@ public class CFColorMenu extends MenuBuilder {
         if (COLOR_CODE_MAP.containsKey(itemStack.getType())) {
 
             if (match == null) {
-                CoinflipPlugin.plugin.coinFlipMatchList.add(
-                        CoinflipPlugin.CoinFlipMatch.create(
-                                player,
-                                new CFViewMenu(player, amount, itemStack.getType()),
-                                event.getSlot()
-                        )
-                );
+                if (CoinflipPlugin.getEconomy().withdrawPlayer(player, amount).transactionSuccess()) {
+                    CoinflipPlugin.plugin.coinFlipMatchList.add(
+                            CoinflipPlugin.CoinFlipMatch.create(
+                                    player,
+                                    new CFViewMenu(player, amount, itemStack.getType()),
+                                    event.getSlot()
+                            )
+                    );
+                }
+                player.closeInventory();
             } else {
-                if (CoinflipPlugin.plugin.coinFlipMatchList.contains(match)) {
-                    CoinflipPlugin.plugin.coinFlipMatchList.remove(match); // double check if exist so we don't dupe
+                if (CoinflipPlugin.plugin.coinFlipMatchList.contains(match)) {  // double check if exist so we don't dupe
+                    if (CoinflipPlugin.getEconomy().withdrawPlayer(player, amount).transactionSuccess()) {
+                        CoinflipPlugin.plugin.coinFlipMatchList.remove(match);
 
+                        match.startGame(player, new CFViewMenu(player, amount, itemStack.getType()).init());
+
+                        match.getCreatorMenu().setOpponent(
+                                player, itemStack.getType()
+                        );
+
+                        match.getOpponentMenu().setOpponent(
+                                match.getCreatorMenu().getUser(), match.getCreatorMenu().getUserMaterial()
+                        );
+
+                        match.getCreatorMenu().open(match.getCreatorMenu().getUser());
+
+                        match.getOpponentMenu().open(player);
+                    }
                 } else {
                     player.closeInventory();
                     player.sendMessage(ChatColor.RED + "Someone has already started this coin flip.");
                 }
             }
-
-            player.closeInventory();
         }
-
-        Bukkit.broadcastMessage("test: " + CoinflipPlugin.plugin.coinFlipMatchList.size());
 
     }
 

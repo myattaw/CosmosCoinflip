@@ -104,6 +104,10 @@ public class CFViewMenu extends MenuBuilder {
         redraw();
     }
 
+    public double getAmount() {
+        return amount;
+    }
+
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
         event.setCancelled(true);
