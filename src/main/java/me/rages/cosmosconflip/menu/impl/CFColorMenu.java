@@ -3,6 +3,7 @@ package me.rages.cosmosconflip.menu.impl;
 import me.rages.cosmosconflip.CoinflipPlugin;
 import me.rages.cosmosconflip.menu.MenuBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,6 +19,7 @@ import static me.rages.cosmosconflip.util.Util.setItemNameAndLore;
 
 public class CFColorMenu extends MenuBuilder {
 
+    private CoinflipPlugin.CoinFlipMatch match;
     private int ignored;
     private double amount;
 
@@ -48,9 +50,21 @@ public class CFColorMenu extends MenuBuilder {
         this.amount = amount;
     }
 
+    private CFColorMenu(String title, double amount, int ignored, CoinflipPlugin.CoinFlipMatch match) {
+        super(title, InventoryType.DROPPER);
+        this.ignored = ignored;
+        this.amount = amount;
+        this.match = match;
+    }
+
     public static CFColorMenu create(String title, double amount, int ignored) {
         return new CFColorMenu(title, amount, ignored);
     }
+
+    public static CFColorMenu start(String title, double amount, int ignored, CoinflipPlugin.CoinFlipMatch match) {
+        return new CFColorMenu(title, amount, ignored, match);
+    }
+
 
     @Override
     public CFColorMenu init() {
@@ -81,12 +95,25 @@ public class CFColorMenu extends MenuBuilder {
         Player player = (Player) event.getWhoClicked();
 
         if (COLOR_CODE_MAP.containsKey(itemStack.getType())) {
-            CoinflipPlugin.plugin.coinFlipMatchList.add(
-                    CoinflipPlugin.CoinFlipMatch.create(
-                            player,
-                            new CFViewMenu(player, amount, itemStack.getType())
-                    )
-            );
+
+            if (match == null) {
+                CoinflipPlugin.plugin.coinFlipMatchList.add(
+                        CoinflipPlugin.CoinFlipMatch.create(
+                                player,
+                                new CFViewMenu(player, amount, itemStack.getType()),
+                                event.getSlot()
+                        )
+                );
+            } else {
+                if (CoinflipPlugin.plugin.coinFlipMatchList.contains(match)) {
+                    CoinflipPlugin.plugin.coinFlipMatchList.remove(match); // double check if exist so we don't dupe
+
+                } else {
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.RED + "Someone has already started this coin flip.");
+                }
+            }
+
             player.closeInventory();
         }
 

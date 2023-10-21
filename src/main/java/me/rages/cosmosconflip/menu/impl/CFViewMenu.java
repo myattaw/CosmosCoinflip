@@ -30,12 +30,11 @@ public class CFViewMenu extends MenuBuilder {
         this.amount = amount;
     }
 
-    public CFViewMenu(String title, Material creatorMaterial, Material opponentMaterial) {
-        super(title, InventoryType.HOPPER);
-        this.userMaterial = creatorMaterial;
-        this.opponentMaterial = opponentMaterial;
-        this.amount = amount;
-    }
+//    public CFViewMenu(String title, Material creatorMaterial, Material opponentMaterial) {
+//        super(title, InventoryType.HOPPER);
+//        this.userMaterial = creatorMaterial;
+//        this.opponentMaterial = opponentMaterial;
+//    }
 
     @Override
     public CFViewMenu init() {
@@ -107,6 +106,7 @@ public class CFViewMenu extends MenuBuilder {
 
     @Override
     public void onInventoryClick(InventoryClickEvent event) {
+        event.setCancelled(true);
     }
 
     @Override

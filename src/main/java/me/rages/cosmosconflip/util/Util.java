@@ -45,10 +45,6 @@ public class Util {
         return String.format("%,d", (long) amount);
     }
 
-    public static String getAbbreviatedCurrency(double amount) {
-        return Util.getAbbreviatedCurrency(amount, false);
-    }
-
     public static long getValueFromAbbreviatedCurrency(String abbreviated) {
         try {
             char multiplier = Character.toUpperCase(abbreviated.charAt(abbreviated.length() - 1));

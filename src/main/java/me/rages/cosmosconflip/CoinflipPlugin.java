@@ -2,6 +2,7 @@ package me.rages.cosmosconflip;
 
 import me.rages.cosmosconflip.commands.ConflipCommand;
 import me.rages.cosmosconflip.menu.MenuBuilder;
+import me.rages.cosmosconflip.menu.impl.CFMainMenu;
 import me.rages.cosmosconflip.menu.impl.CFViewMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,11 +22,13 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
     public static CoinflipPlugin plugin;
     public List<CoinFlipMatch> coinFlipMatchList = new ArrayList<>();
+    private CFMainMenu cfMainMenu;
 
     @Override
     public void onEnable() {
         new ConflipCommand(this);
         getServer().getPluginManager().registerEvents(this, this);
+        this.cfMainMenu = new CFMainMenu(this).init();
     }
 
     @Override
@@ -72,19 +75,21 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
         private CFViewMenu creatorMenu;
         private CFViewMenu opponentMenu;
+        private int ignored;
+        private double amount;
 
         private static final Random random = new Random();
 
         private Stack<Boolean> flips = new Stack<>();
 
 
-        CoinFlipMatch(Player creator, CFViewMenu creatorMenu) {
+        CoinFlipMatch(Player creator, CFViewMenu creatorMenu, int ignored) {
             this.creator = creator;
             this.creatorMenu = creatorMenu;
         }
 
-        public static CoinFlipMatch create(Player creator, CFViewMenu creatorMenu) {
-            return new CoinFlipMatch(creator, creatorMenu);
+        public static CoinFlipMatch create(Player creator, CFViewMenu creatorMenu, int ignored) {
+            return new CoinFlipMatch(creator, creatorMenu, ignored);
         }
 
         public boolean coinFlip() {
@@ -146,6 +151,14 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
         public CFViewMenu getOpponentMenu() {
             return opponentMenu;
         }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public int getIgnored() {
+            return ignored;
+        }
     }
 
     public static boolean hasTimeElapsed(long startTime, long duration, TimeUnit timeUnit) {
@@ -153,4 +166,7 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
         return System.currentTimeMillis() >= targetTime;
     }
 
+    public CFMainMenu getCfMainMenu() {
+        return cfMainMenu;
+    }
 }

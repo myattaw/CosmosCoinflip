@@ -41,6 +41,8 @@ public class ConflipCommand implements CommandExecutor {
                 }
             } else {
                 // display menu off current coinflips
+                plugin.getCfMainMenu().redraw();
+                plugin.getCfMainMenu().open(player);
             }
 
             System.out.println(args.length);
