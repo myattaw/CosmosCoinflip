@@ -31,16 +31,16 @@ public class CFColorMenu extends MenuBuilder {
             "&7Click to select this color", "&7and start the coin flip for", "&a$%amount%"
     };
 
-    private static final String[] ITEM_NAMES = {
+    public static final String[] ITEM_NAMES = {
             "&5&lPURPLE",
-            "&b&lLIGHT BLUE",
+            "&9&lBLUE",
+            "&b&lCYAN",
             "&c&lRED",
             "&a&lGREEN",
             "&e&lYELLOW",
             "&6&lORANGE",
             "&f&lWHITE",
             "&8&lGRAY",
-            "&0&lBLACK"
     };
 
 
@@ -108,6 +108,7 @@ public class CFColorMenu extends MenuBuilder {
                                     event.getSlot()
                             )
                     );
+                    CoinflipPlugin.plugin.getCfMainMenu().redraw();
                 }
                 player.closeInventory();
             } else {

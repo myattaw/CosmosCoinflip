@@ -6,6 +6,7 @@ import me.rages.cosmosconflip.menu.impl.CFMainMenu;
 import me.rages.cosmosconflip.menu.impl.CFViewMenu;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +30,7 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        this.saveDefaultConfig();
         if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -97,6 +99,7 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
 
     public static class CoinFlipMatch {
         private Player creator;
+        private Material creatorMaterial;
         private Player opponent;
 
         private CFViewMenu creatorMenu;
@@ -114,6 +117,7 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
             this.creatorMenu = creatorMenu;
             this.ignored = ignored;
             this.amount = creatorMenu.getAmount();
+            this.creatorMaterial = creatorMenu.getUserMaterial();
         }
 
         public static CoinFlipMatch create(Player creator, CFViewMenu creatorMenu, int ignored) {
@@ -175,6 +179,14 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
                     }
                 }
             }, 2L, 2L));
+        }
+
+        public Player getCreator() {
+            return creator;
+        }
+
+        public Material getCreatorMaterial() {
+            return creatorMaterial;
         }
 
         public CFViewMenu getCreatorMenu() {

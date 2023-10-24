@@ -13,8 +13,20 @@ import java.util.stream.Collectors;
 
 public class Util {
 
+    public static final Map<Material, String> ITEM_NAMES = ImmutableMap.<Material, String>builder()
+            .put(Material.PURPLE_CONCRETE, "&5&lPURPLE")
+            .put(Material.BLUE_CONCRETE, "&b&lBLUE")
+            .put(Material.CYAN_CONCRETE, "&b&lLIGHT BLUE")
+            .put(Material.RED_CONCRETE, "&c&lRED")
+            .put(Material.LIME_CONCRETE, "&a&lGREEN")
+            .put(Material.YELLOW_CONCRETE, "&e&lYELLOW")
+            .put(Material.ORANGE_CONCRETE, "&6&lORANGE")
+            .put(Material.WHITE_CONCRETE, "&f&lWHITE")
+            .put(Material.GRAY_CONCRETE, "&8&lGRAY")
+            .build();
     public static final Map<Material, String> COLOR_CODE_MAP = ImmutableMap.<Material, String>builder()
             .put(Material.PURPLE_CONCRETE, "&5")
+            .put(Material.BLUE_CONCRETE, "&9")
             .put(Material.LIGHT_BLUE_CONCRETE, "&b")
             .put(Material.RED_CONCRETE, "&c")
             .put(Material.LIME_CONCRETE, "&a")
@@ -22,7 +34,6 @@ public class Util {
             .put(Material.ORANGE_CONCRETE, "&6")
             .put(Material.WHITE_CONCRETE, "&f")
             .put(Material.GRAY_CONCRETE, "&8")
-            .put(Material.BLACK_CONCRETE, "&0")
             .build();
 
     private static final List<Map.Entry<Long, String>> CURRENCY_SUFFIXESS = Arrays.asList(

@@ -1,0 +1,19 @@
+settings:
+  broadcast:
+    minimum: 200000
+    message: "%winner% has just beat %loser% in a %amount% coin flip!"
+
+guis:
+  main-gui:
+    title: "Coin Flip Matches"
+    item-name: "%color%&l%player%"
+    item-lore:
+      - " "
+      - "&7&lWager"
+      - "&a$%amount%"
+      - " "
+      - "&7&lColor Chosen"
+      - "&7%color_name%"
+      - " "
+      - "&c&lWin/Loss Ratio"
+      - "&7%ratio%"

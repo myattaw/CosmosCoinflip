@@ -24,17 +24,11 @@ public class CFViewMenu extends MenuBuilder {
     private int timer = 3;
 
     public CFViewMenu(Player user, double amount, Material creatorMaterial) {
-        super("Coin Flip Match - " + Util.getAbbreviatedCurrency(amount, true), InventoryType.HOPPER);
+        super("Coin Flip Match - $" + Util.getAbbreviatedCurrency(amount, true), InventoryType.HOPPER);
         this.user = user;
         this.userMaterial = creatorMaterial;
         this.amount = amount;
     }
-
-//    public CFViewMenu(String title, Material creatorMaterial, Material opponentMaterial) {
-//        super(title, InventoryType.HOPPER);
-//        this.userMaterial = creatorMaterial;
-//        this.opponentMaterial = opponentMaterial;
-//    }
 
     @Override
     public CFViewMenu init() {
