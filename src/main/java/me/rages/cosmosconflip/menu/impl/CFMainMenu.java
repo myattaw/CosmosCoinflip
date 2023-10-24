@@ -28,6 +28,7 @@ public class CFMainMenu extends MenuBuilder {
 
     public void redraw() {
         int i = 0;
+        inventory.clear();
         for (CoinflipPlugin.CoinFlipMatch match : plugin.coinFlipMatchList) {
             ItemStack skullItem = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) skullItem.getItemMeta();

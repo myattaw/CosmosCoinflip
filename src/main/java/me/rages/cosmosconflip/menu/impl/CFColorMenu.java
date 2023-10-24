@@ -114,6 +114,7 @@ public class CFColorMenu extends MenuBuilder {
                 if (CoinflipPlugin.plugin.coinFlipMatchList.contains(match)) {  // double check if exist so we don't dupe
                     if (CoinflipPlugin.getEconomy().withdrawPlayer(player, amount).transactionSuccess()) {
                         CoinflipPlugin.plugin.coinFlipMatchList.remove(match);
+                        CoinflipPlugin.plugin.getCfMainMenu().redraw();
 
                         match.startGame(player, new CFViewMenu(player, amount, itemStack.getType()).init());
 

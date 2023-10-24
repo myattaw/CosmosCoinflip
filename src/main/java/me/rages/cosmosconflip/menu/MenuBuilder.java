@@ -26,11 +26,10 @@ public abstract class MenuBuilder<T> implements InventoryHolder {
     }
 
     public MenuBuilder open(Player player) {
+        player.closeInventory();
         player.openInventory(inventory);
         return this;
     }
-
-
 
     public String getTitle() {
         return ChatColor.translateAlternateColorCodes('&', title);
