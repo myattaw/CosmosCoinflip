@@ -30,11 +30,31 @@ public class ConflipCommand implements CommandExecutor {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("create")) {
                     if (args.length > 1 && getValueFromAbbreviatedCurrency(args[1]) != -1) {
+
+                        for (CoinflipPlugin.CoinFlipMatch match : plugin.coinFlipMatchList) {
+                            if (match.getCreator().getUniqueId().equals(player.getUniqueId())) {
+                                player.sendMessage(ChatColor.RED + "You can only have 1 coin flip at a time.");
+                                return false;
+                            }
+                        }
+
                         double amount = getValueFromAbbreviatedCurrency(args[1]);
                         CFColorMenu.create("Choose a Color", amount,-1).init().open(player);
                     } else {
                         player.sendMessage(ChatColor.RED + "Usage: /coinflip create [$amount]");
                     }
+                } else if (args[0].equalsIgnoreCase("remove")) {
+
+                    for (CoinflipPlugin.CoinFlipMatch match : plugin.coinFlipMatchList) {
+                        if (match.getCreator().getUniqueId().equals(player.getUniqueId())) {
+                            player.sendMessage(ChatColor.RED + "You have removed your coin flip.");
+                            double amount = match.getAmount();
+                            plugin.coinFlipMatchList.remove(match);
+                            CoinflipPlugin.getEconomy().depositPlayer(player, amount);
+                            return false;
+                        }
+                    }
+
                 }
             } else {
                 // display menu off current coinflips

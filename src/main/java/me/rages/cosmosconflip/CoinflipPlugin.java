@@ -52,9 +52,12 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // give back all the money to all players
-
-        for (CoinFlipMatch matches : coinFlipMatchList) {
-
+        Iterator<CoinFlipMatch> iterator = coinFlipMatchList.iterator();
+        while (iterator.hasNext()) {
+            CoinFlipMatch match = iterator.next();
+            double amount = match.getAmount();
+            iterator.remove(); // Safely removes the current element from the list
+            getEconomy().depositPlayer(match.getCreator(), amount);
         }
     }
 

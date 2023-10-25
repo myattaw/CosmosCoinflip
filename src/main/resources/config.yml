@@ -1,6 +1,7 @@
 settings:
   win-msg: "&c&lFACTIONS &8&l▶ &7You have won &a$%amount%"
   loss-msg: "&c&lFACTIONS &8&l▶ &7You have lost &c$%amount%"
+  remove-msg: "&c&lFACTIONS &8&l▶ &7Successfully created coin flip! &c/coinflip remove &7to remove coin flip."
   broadcast:
     minimum: 25000
     message: "&4&lCOINFLIP &8&l▶ &c%winner% &7has just beat &c%loser% &7in a &a$%amount% &7coin flip!"

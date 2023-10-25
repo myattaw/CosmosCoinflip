@@ -109,6 +109,10 @@ public class CFColorMenu extends MenuBuilder {
                             )
                     );
                     CoinflipPlugin.plugin.getCfMainMenu().redraw();
+                    player.sendMessage(ChatColor.translateAlternateColorCodes(
+                            '&',
+                            CoinflipPlugin.plugin.getConfig().getString("settings.remove-msg"))
+                    );
                 }
                 player.closeInventory();
             } else {
