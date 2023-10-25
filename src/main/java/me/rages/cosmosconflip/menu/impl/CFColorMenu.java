@@ -97,7 +97,7 @@ public class CFColorMenu extends MenuBuilder {
 
         Player player = (Player) event.getWhoClicked();
 
-        if (COLOR_CODE_MAP.containsKey(itemStack.getType())) {
+        if (itemStack != null && COLOR_CODE_MAP.containsKey(itemStack.getType())) {
 
             if (match == null) {
                 if (CoinflipPlugin.getEconomy().withdrawPlayer(player, amount).transactionSuccess()) {

@@ -4,15 +4,19 @@ import me.rages.cosmosconflip.commands.ConflipCommand;
 import me.rages.cosmosconflip.menu.MenuBuilder;
 import me.rages.cosmosconflip.menu.impl.CFMainMenu;
 import me.rages.cosmosconflip.menu.impl.CFViewMenu;
+import me.rages.cosmosconflip.util.Util;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,9 +32,12 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
     private CFMainMenu cfMainMenu;
     private static Economy econ = null;
 
+    public static NamespacedKey cfRatioKey;
+
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
+        cfRatioKey = new NamespacedKey(this, "cfratio");
         if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -164,15 +171,26 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
                             opponentMenu.updateCoin(!flip, flips.isEmpty());
 
                             if (flips.isEmpty()) {
+
+                                if (amount >= plugin.getConfig().getDouble("settings.broadcast.minimum")) {
+                                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+                                            plugin.getConfig().getString("settings.broadcast.message")
+                                                    .replace("%winner%", coin ? creator.getName() : opponent.getName())
+                                                    .replace("%loser%", coin ? opponent.getName() : creator.getName())
+                                                    .replace("%amount%", Util.getAbbreviatedCurrency(amount, true))
+                                    ));
+                                }
+
                                 if (coin) {
-                                    Bukkit.broadcastMessage("Creator has won");
+                                    addWinLoss(creator.getPlayer(), true, amount);
+                                    addWinLoss(Objects.requireNonNull(opponent.getPlayer()), false, amount);
                                     CoinflipPlugin.getEconomy().depositPlayer(creator.getPlayer(), amount * 2);
                                 } else {
-                                    Bukkit.broadcastMessage("Opponent has won");
+                                    addWinLoss(opponent.getPlayer(), true, amount);
+                                    addWinLoss(creator.getPlayer(), false, amount);
                                     CoinflipPlugin.getEconomy().depositPlayer(opponent.getPlayer(), amount * 2);
                                 }
                             }
-
                         }
                     } else if (hasTimeElapsed(startTime.get(), 3, TimeUnit.SECONDS)) {
                         Bukkit.getScheduler().cancelTask(taskID.get());
@@ -204,6 +222,32 @@ public final class CoinflipPlugin extends JavaPlugin implements Listener {
         public int getIgnored() {
             return ignored;
         }
+    }
+
+    private static void addWinLoss(Player player, boolean won, double amount) {
+        int[] games = player.getPersistentDataContainer().getOrDefault(
+                cfRatioKey,
+                PersistentDataType.INTEGER_ARRAY,
+                new int[2]
+        );
+
+        if (won) {
+            games[0] += 1;
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            Objects.requireNonNull(plugin.getConfig().getString("settings.win-msg"))
+                                    .replace("%amount%", Util.getAbbreviatedCurrency(amount, true))
+                    )
+            );
+        } else {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            Objects.requireNonNull(plugin.getConfig().getString("settings.loss-msg"))
+                                    .replace("%amount%", Util.getAbbreviatedCurrency(amount, true))
+                    )
+            );
+            games[1] += 1;
+        }
+
+        player.getPersistentDataContainer().set(cfRatioKey, PersistentDataType.INTEGER_ARRAY, games);
     }
 
     public static boolean hasTimeElapsed(long startTime, long duration, TimeUnit timeUnit) {

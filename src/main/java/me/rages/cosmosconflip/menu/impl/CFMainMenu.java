@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class CFMainMenu extends MenuBuilder {
                                 '&',
                                 l.replace("%amount%", Util.getAbbreviatedCurrency(match.getAmount(), true))
                                         .replace("%color_name%", Util.ITEM_NAMES.get(match.getCreatorMaterial()))
-                                        .replace("%ratio%", "")
+                                        .replace("%ratio%", getRatio(match.getCreator()))
                         )
                 );
             }
@@ -62,6 +63,20 @@ public class CFMainMenu extends MenuBuilder {
 
             inventory.setItem(i++, skullItem);
         }
+    }
+
+    private String getRatio(Player player) {
+        int[] games = player.getPersistentDataContainer().getOrDefault(
+                CoinflipPlugin.cfRatioKey,
+                PersistentDataType.INTEGER_ARRAY,
+                new int[2]
+        );
+
+        String str = ChatColor.GREEN + String.valueOf(games[0]) +
+                ChatColor.GRAY + ":" +
+                ChatColor.RED + games[1];
+
+        return str;
     }
 
     @Override

@@ -1,7 +1,9 @@
 settings:
+  win-msg: "&c&lFACTIONS &8&l▶ &7You have won &a$%amount%"
+  loss-msg: "&c&lFACTIONS &8&l▶ &7You have lost &c$%amount%"
   broadcast:
-    minimum: 200000
-    message: "%winner% has just beat %loser% in a %amount% coin flip!"
+    minimum: 25000
+    message: "&4&lCOINFLIP &8&l▶ &c%winner% &7has just beat &c%loser% &7in a &a$%amount% &7coin flip!"
 
 guis:
   main-gui:
@@ -15,5 +17,5 @@ guis:
       - "&7&lColor Chosen"
       - "&7%color_name%"
       - " "
-      - "&c&lWin/Loss Ratio"
-      - "&7%ratio%"
+      - "&7&lWin/Loss Ratio"
+      - "&7(%ratio%&7)"
